@@ -8,13 +8,26 @@ class Elevator:
         self.ySize = ySize
         self.connection = connection
         if connection != None:
-            self.pos = (connection.pos[0]+xSize/2, connection.pos[1]+connection.rope.endLen)
+            self.pos = (connection.pos[0]+self.connection.radius-self.xSize/2, connection.pos[1]+connection.rope.endLen)
+
+    def checkFloor(self):
+        pass
 
     def draw(self, img):
-
-        self.pos = [self.connection.pos[0]+self.xSize/2, self.connection.pos[1]+self.connection.rope.endLen]
+        self.pos = [self.connection.pos[0]+self.connection.radius-self.xSize/2,
+                    self.connection.pos[1]+self.connection.rope.endLen]
         if self.connection.rope.endLen<self.connection.radius:
             self.pos[1] = self.connection.pos[1]+self.connection.radius
         cv2.rectangle(img, (round(self.pos[0]), round(self.pos[1])),
         (round(self.pos[0]+self.xSize), round((self.pos[1]+self.ySize))),
-        (255, 255, 255))
+        (255, 0, 0))
+
+    def drawFloors(self, img):
+        cv2.line(img, (round(self.pos[0]), self.connection.pos[1]+self.connection.radius),
+                      (round(self.pos[0]), self.connection.pos[1]+self.connection.radius+self.totalFloor*self.ySize), (255, 255, 255))
+        cv2.line(img, (round(self.pos[0]+self.xSize), self.connection.pos[1]+self.connection.radius),
+                      (round(self.pos[0]+self.xSize), self.connection.pos[1]+self.connection.radius+self.totalFloor*self.ySize), (255, 255, 255))
+        for i in range(self.totalFloor+1):
+            cv2.line(img, (round(self.pos[0]), self.connection.pos[1]+self.connection.radius+i*self.ySize),
+                          (round(self.pos[0]+self.xSize), self.connection.pos[1]+self.connection.radius+i*self.ySize),
+                          (255, 255, 255))
