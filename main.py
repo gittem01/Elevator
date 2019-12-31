@@ -11,11 +11,33 @@ cv2.namedWindow("KeyWin")
 wh = Wheel([150, 100], 6, 40)
 el = Elevator([300, 300], 9, 25, 40, wh)
 
+slice = int((el.totalFloor+1)/2)
+req = 1
+
 img = np.zeros((600, 400, 3), np.uint8)
-img2 = np.zeros((300, 300, 3), np.uint8)
+img2 = np.zeros((600, 300, 3), np.uint8)
+
+sh0 = img2.shape[0]
+sh1 = img2.shape[1]
+for i in range(1, slice):
+    cv2.line(img2, (0, round(sh0/slice)*i), (sh1, round(sh0/slice)*i), (255, 255, 255))
+cv2.line(img2, (round(sh1/2), 0), (round(sh1/2), sh0), (266, 255, 255))
+
+for i in range(1, el.totalFloor+1):
+    cv2.putText(img2, str(el.totalFloor-i+1),(((i+1)%2)*round(sh1/2)+30, ((i+1)//2)*round(sh0/slice)-20),
+                cv2.FONT_HERSHEY_SIMPLEX, 4, (255,255,255), 1, cv2.LINE_AA)
+
+def ClickPos(event, x, y, flags, param):
+    global req, status
+    if event == cv2.EVENT_LBUTTONDOWN:
+        if status == "On move":
+            return
+        req = el.totalFloor - int((y/sh0)*slice)*2 - int((x/sh1)*2)
+cv2.setMouseCallback("KeyWin", ClickPos)
 
 el.drawFloors(img)
 frame = -1
+status = None
 while 1:
     frame += 1
     printedImg = img.copy()
@@ -24,16 +46,10 @@ while 1:
     floor = el.checkFloor()
     if floor<1 or floor>el.totalFloor:
         break
-    if frame%500 == 0:
-        req = random.randrange(1, 10)
+
     status = el.goReq(req)
-    print(status)
-    img2[:150, 150:] = (0, 0, 0)
-    cv2.putText(img2, str(round(floor)), (180, 120), cv2.FONT_HERSHEY_SIMPLEX, 5, 255, 3)
+
     key = cv2.waitKey(1)
-    if key>0 and key<300:
-        img2 = np.zeros((300, 300, 3), np.uint8)
-        cv2.putText(img2, chr(key), (0,120), cv2.FONT_HERSHEY_SIMPLEX, 5, 255, 3)
     if key == ord("q"):
         break
     if key == ord("d"):
