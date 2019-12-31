@@ -10,14 +10,16 @@ class Elevator:
         if connection != None:
             self.pos = (connection.pos[0]+self.connection.radius-self.xSize/2, connection.pos[1]+connection.rope.endLen)
 
-    def checkFloor(self):
-        pass
+    def checkFloor(self): # Only checking for the y value, x is always same
+        bottom = self.connection.pos[1]+self.connection.radius+self.totalFloor*self.ySize
+        top = self.connection.pos[1]+self.connection.radius
+        relativePos = self.pos[1]-top
+        floor = round(self.totalFloor-relativePos/self.ySize, 2)
+        return floor
 
     def draw(self, img):
         self.pos = [self.connection.pos[0]+self.connection.radius-self.xSize/2,
                     self.connection.pos[1]+self.connection.rope.endLen]
-        if self.connection.rope.endLen<self.connection.radius:
-            self.pos[1] = self.connection.pos[1]+self.connection.radius
         cv2.rectangle(img, (round(self.pos[0]), round(self.pos[1])),
         (round(self.pos[0]+self.xSize), round((self.pos[1]+self.ySize))),
         (255, 0, 0))
