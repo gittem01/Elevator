@@ -10,6 +10,17 @@ class Elevator:
         if connection != None:
             self.pos = (connection.pos[0]+self.connection.radius-self.xSize/2, connection.pos[1]+connection.rope.endLen)
 
+    def goReq(self, floor):
+        floorPos = self.connection.pos[1]+self.connection.radius+self.ySize*(self.totalFloor-floor)
+        if round(abs(floorPos-self.pos[1]), 1) < 1:
+            self.connection.acceleration = 0
+            self.connection.speed = 0
+            return "Stop"
+        if floorPos>self.pos[1]:
+            self.connection.acceleration = -0.001
+        else:
+            self.connection.acceleration = 0.001
+        return "On move"
     def checkFloor(self): # Only checking for the y value, x is always same
         bottom = self.connection.pos[1]+self.connection.radius+self.totalFloor*self.ySize
         top = self.connection.pos[1]+self.connection.radius

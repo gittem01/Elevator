@@ -11,12 +11,15 @@ class Wheel:
         self.speed = 0
         self.maxSpeed = 0.01
         self.rope = Rope(self)
+        self.acceleration = 0
+
     def draw(self, img):
         cv2.circle(img, (round(self.pos[0]), round(self.pos[1])), self.radius, (255, 0, 0), 2)
         for beam in self.beams:
             beam.draw(img)
         self.rope.draw(img)
     def turn(self):
+        self.speed += self.acceleration
         if self.speed > self.maxSpeed:
             self.speed = self.maxSpeed
         elif self.speed < -self.maxSpeed:
