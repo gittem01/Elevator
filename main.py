@@ -4,17 +4,23 @@ import random
 from elevator import *
 from beam import *
 from wheel import *
+from door import *
 
 cv2.namedWindow("Elevator")
 cv2.namedWindow("KeyWin")
 
+cv2.moveWindow("Elevator", 0, 0);
+cv2.moveWindow("KeyWin", 400, 0);
+
 wh = Wheel([150, 100], 6, 40)
 el = Elevator([300, 300], 9, 25, 40, wh)
+dr = Door(el)
 
 slice = int((el.totalFloor+1)/2)
 req = 1
 
 img = np.zeros((600, 400, 3), np.uint8)
+printedImg = img.copy()
 img2 = np.zeros((600, 300, 3), np.uint8)
 
 sh0 = img2.shape[0]
@@ -41,7 +47,6 @@ status = None
 while 1:
     frame += 1
     printedImg = img.copy()
-    wh.turn()
 
     floor = el.checkFloor()
     if floor<1 or floor>el.totalFloor:
@@ -57,7 +62,11 @@ while 1:
     if key == ord("a"):
         wh.acceleration = 1
 
+    wh.turn()
     wh.draw(printedImg)
     el.draw(printedImg)
+    dr.draw(printedImg)
+    if status == "Stop":
+        dr.animate(printedImg, "Elevator")
     cv2.imshow("Elevator", printedImg)
     cv2.imshow("KeyWin", img2)
